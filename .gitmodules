@@ -1,0 +1,27 @@
+[submodule "orbslam3"]
+	path = orbslam3
+	url = https://github.com/open-shade/orbslam3.git
+[submodule "yolov5"]
+	path = yolov5
+	url = https://github.com/open-shade/yolov5.git
+[submodule "resnet"]
+	path = resnet
+	url = https://github.com/open-shade/resnet.git
+[submodule "swin-classification"]
+	path = swin-classification
+	url = https://github.com/open-shade/swin-classification.git
+[submodule "convnext"]
+	path = convnext
+	url = https://github.com/open-shade/convnext.git
+[submodule "vision-transformer"]
+	path = vision-transformer
+	url = https://github.com/open-shade/vision-transformer.git
+[submodule "segformer"]
+	path = segformer
+	url = https://github.com/open-shade/segformer.git
+[submodule "deit"]
+	path = deit
+	url = https://github.com/open-shade/deit.git
+[submodule "ghostnet"]
+	path = ghostnet
+	url = https://github.com/open-shade/ghostnet.git
