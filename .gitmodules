@@ -25,3 +25,12 @@
 [submodule "ghostnet"]
 	path = ghostnet
 	url = https://github.com/open-shade/ghostnet.git
+[submodule "template-semantic-segmentation"]
+	path = template-semantic-segmentation
+	url = https://github.com/open-shade/template-semantic-segmentation.git
+[submodule "template-object-detection"]
+	path = template-object-detection
+	url = https://github.com/open-shade/template-object-detection.git
+[submodule "template-image-classification"]
+	path = template-image-classification
+	url = https://github.com/open-shade/template-image-classification.git
