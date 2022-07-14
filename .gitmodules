@@ -1,36 +1,92 @@
 [submodule "orbslam3"]
 	path = orbslam3
 	url = https://github.com/open-shade/orbslam3.git
+    branch = main
 [submodule "yolov5"]
 	path = yolov5
 	url = https://github.com/open-shade/yolov5.git
+	branch = main
 [submodule "resnet"]
 	path = resnet
 	url = https://github.com/open-shade/resnet.git
+	branch = master
 [submodule "swin-classification"]
 	path = swin-classification
 	url = https://github.com/open-shade/swin-classification.git
+	branch = master
 [submodule "convnext"]
 	path = convnext
 	url = https://github.com/open-shade/convnext.git
+	branch = master
 [submodule "vision-transformer"]
 	path = vision-transformer
 	url = https://github.com/open-shade/vision-transformer.git
+	branch = master
 [submodule "segformer"]
 	path = segformer
 	url = https://github.com/open-shade/segformer.git
+	branch = master
 [submodule "deit"]
 	path = deit
 	url = https://github.com/open-shade/deit.git
+	branch = master
 [submodule "ghostnet"]
 	path = ghostnet
 	url = https://github.com/open-shade/ghostnet.git
+	branch = master
 [submodule "template-semantic-segmentation"]
 	path = template-semantic-segmentation
 	url = https://github.com/open-shade/template-semantic-segmentation.git
+	branch = main
 [submodule "template-object-detection"]
 	path = template-object-detection
 	url = https://github.com/open-shade/template-object-detection.git
+	branch = master
 [submodule "template-image-classification"]
 	path = template-image-classification
 	url = https://github.com/open-shade/template-image-classification.git
+	branch = master
+[submodule "detr_segmentation"]
+	path = detr_segmentation
+	url = https://github.com/open-shade/detr_segmentation.git
+	branch = main
+[submodule "detr_detection"]
+	path = detr_detection
+	url = https://github.com/open-shade/detr_detection.git
+	branch = master
+[submodule "ssd"]
+	path = ssd
+	url = https://github.com/open-shade/ssd.git
+	branch = master
+[submodule "beit_segmentation"]
+	path = beit_segmentation
+	url = https://github.com/open-shade/beit_segmentation.git
+	branch = main
+[submodule "segformer_segmentation"]
+	path = segformer_segmentation
+	url = https://github.com/open-shade/segformer_segmentation.git
+	branch = main
+[submodule "dpt_segmentation"]
+	path = dpt_segmentation
+	url = https://github.com/open-shade/dpt_segmentation.git
+	branch = main
+[submodule "yolos"]
+	path = yolos
+	url = https://github.com/open-shade/yolos.git
+	branch = master
+[submodule "segformer_classification"]
+	path = segformer_classification
+	url = https://github.com/open-shade/segformer_classification.git
+	branch = master
+[submodule "vision_perceiver"]
+	path = vision_perceiver
+	url = https://github.com/open-shade/vision_perceiver.git
+	branch = master
+[submodule "vision_transformer"]
+	path = vision_transformer
+	url = https://github.com/open-shade/vision_transformer.git
+	branch = master
+[submodule "swin"]
+	path = swin
+	url = https://github.com/open-shade/swin.git
+	branch = master
