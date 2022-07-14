@@ -6,10 +6,6 @@
 	path = yolov5
 	url = https://github.com/open-shade/yolov5.git
 	branch = main
-[submodule "resnet"]
-	path = resnet
-	url = https://github.com/open-shade/resnet.git
-	branch = master
 [submodule "swin-classification"]
 	path = swin-classification
 	url = https://github.com/open-shade/swin-classification.git
@@ -89,4 +85,8 @@
 [submodule "swin"]
 	path = swin
 	url = https://github.com/open-shade/swin.git
+	branch = master
+[submodule "resnet"]
+	path = resnet
+	url = https://github.com/open-shade/resnet.git
 	branch = master
