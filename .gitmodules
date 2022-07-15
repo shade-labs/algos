@@ -14,10 +14,6 @@
 	path = convnext
 	url = https://github.com/open-shade/convnext.git
 	branch = master
-[submodule "vision-transformer"]
-	path = vision-transformer
-	url = https://github.com/open-shade/vision-transformer.git
-	branch = master
 [submodule "segformer"]
 	path = segformer
 	url = https://github.com/open-shade/segformer.git
