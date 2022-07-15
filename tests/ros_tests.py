@@ -16,7 +16,7 @@ MAX_INIT_ATTEMPTS = 10
 # Try to get the "resnet" component of any algorithm. This is used to identify that the topics have launched
 ALGO_NICKNAME = os.getenv('ALGO').split('/')[1]
 
-ALGO_DETAILS = requests.get('https://provisioning.shaderobotics.com/v1/algo', params={'algo', os.getenv('ALGO')}).json()
+ALGO_DETAILS = requests.get('https://provisioning.shaderobotics.com/v1/algo', params={'algo': os.getenv('ALGO')}).json()
 
 
 class MinimalSubscriber(Node):
@@ -43,8 +43,8 @@ class MinimalSubscriber(Node):
 
         def determine_input_topic():
             # Determine the algorithm's input topic
-            topics = ALGO_DETAILS['topics']
-            for topic, value in topics:
+            topics: dict = ALGO_DETAILS['topics']
+            for topic, value in topics.items():
                 if value['side'] == 'subscriber':
                     return topic
 
@@ -53,8 +53,8 @@ class MinimalSubscriber(Node):
         def determine_output_topic():
             # Determine the algorithm's output topic
             publisher_list = []
-            topics = ALGO_DETAILS['topics']
-            for topic, value in topics:
+            topics: dict = ALGO_DETAILS['topics']
+            for topic, value in topics.items():
                 if value['side'] == 'publisher':
                     publisher_list.append(topic)
 
@@ -66,21 +66,32 @@ class MinimalSubscriber(Node):
                 return publisher_list[0]
             raise LookupError("Could not determine algorithm output topic")
 
-        subprocess.Popen('./camera_simulator.py', env=dict(os.environ, OUTPUT_TOPIC=determine_input_topic()))
+        algorithm_input_topic = determine_input_topic()
+        algorithm_output_topic = determine_output_topic()
+
+        print(f"Algorithm input topic: {algorithm_input_topic} - algorithm output topic {algorithm_output_topic}")
+
+        threading.Thread(target=self.start_publisher, args=(algorithm_input_topic, )).start()
 
         self.verification_subscription = self.create_subscription(
             String,
-            determine_output_topic(),
+            algorithm_output_topic,
             self.listener_callback,
             2
         )
 
-        threading.Thread(target=self.kill_in_time, args=(MAX_INIT_ATTEMPTS, ))
+        threading.Thread(target=self.kill_in_time, args=(MAX_INIT_ATTEMPTS, )).start()
+
+    @staticmethod
+    def start_publisher(input_topic):
+        subprocess.Popen(['python3', os.getcwd() + '/camera_simulator.py'],
+                         env=dict(os.environ).update({"OUTPUT_TOPIC": input_topic}))
 
     @staticmethod
     def kill_in_time(seconds_to_live: int):
         time.sleep(seconds_to_live)
-        raise TimeoutError(f"Did not hear response in {seconds_to_live}")
+        print(f"Did not hear response in {seconds_to_live}")
+        sys.exit(1)
 
     def listener_callback(self, msg):
         def check_all_topic_types():
