@@ -1,5 +1,4 @@
 import threading
-
 import rclpy
 import time
 import os
@@ -17,6 +16,10 @@ MAX_INIT_ATTEMPTS = 10
 ALGO_NICKNAME = os.getenv('ALGO').split('/')[1]
 
 ALGO_DETAILS = requests.get('https://provisioning.shaderobotics.com/v1/algo', params={'algo': os.getenv('ALGO')}).json()
+
+
+def eprint(msg: str):
+    print(msg, file=sys.stderr)
 
 
 class MinimalSubscriber(Node):
@@ -69,7 +72,7 @@ class MinimalSubscriber(Node):
         algorithm_input_topic = determine_input_topic()
         algorithm_output_topic = determine_output_topic()
 
-        print(f"Algorithm input topic: {algorithm_input_topic} - algorithm output topic {algorithm_output_topic}")
+        eprint(f"Algorithm input topic: {algorithm_input_topic} - algorithm output topic {algorithm_output_topic}")
 
         threading.Thread(target=self.start_publisher, args=(algorithm_input_topic, )).start()
 
@@ -90,7 +93,7 @@ class MinimalSubscriber(Node):
     @staticmethod
     def kill_in_time(seconds_to_live: int):
         time.sleep(seconds_to_live)
-        print(f"Did not hear response in {seconds_to_live}")
+        eprint(f"Did not hear response in {seconds_to_live}")
         sys.exit(1)
 
     def listener_callback(self, msg):
@@ -114,7 +117,7 @@ class MinimalSubscriber(Node):
 
         check_all_topic_types()
 
-        print("Validated output topic - exiting...")
+        eprint("Validated output topic - exiting...")
         sys.exit(0)
 
 
