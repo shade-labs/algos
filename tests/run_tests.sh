@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Make sure the video folder exists
+mkdir -p /root
+
 # Install the deps to run the video streamer
 apt update && \
     apt install -y \
@@ -7,7 +10,7 @@ apt update && \
     curl \
     python3-pip ffmpeg libsm6 libxext6 ros-"${ROS_DISTRO}"-cv-bridge ros-"${ROS_DISTRO}"-vision-opencv ros-"${ROS_DISTRO}"-rclpy && \
     python3 -m pip install opencv-python && \
-    curl https://sample-videos.com/video123/mp4/480/big_buck_bunny_480p_10mb.mp4 --output ~/video.mp4
+    curl https://sample-videos.com/video123/mp4/480/big_buck_bunny_480p_10mb.mp4 --output /root/video.mp4
 
 curl https://raw.githubusercontent.com/open-shade/algos/main/tests/ros_tests.py --output ./ros_tests.py
 curl https://raw.githubusercontent.com/open-shade/video_simulator/master/camera_simulator/camera_simulator.py --output ./camera_simulator.py
