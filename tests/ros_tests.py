@@ -102,7 +102,6 @@ class MinimalSubscriber(Node):
         self.kill_proc(1)
 
     def listener_callback(self, msg):
-        self.kill_proc(1)
         def check_all_topic_types():
             active_topics = self.get_topic_names_and_types()
             required_topics = ALGO_DETAILS['topics']
