@@ -9,10 +9,8 @@ apt update && \
     python3 -m pip install opencv-python && \
     curl https://sample-videos.com/video123/mp4/480/big_buck_bunny_480p_10mb.mp4 --output ~/video.mp4
 
-curl http://fileserver.com/files/ros_tests.py --output ./ros_tests.py
+curl https://raw.githubusercontent.com/open-shade/algos/main/tests/ros_tests.py --output ./ros_tests.py
 curl https://raw.githubusercontent.com/open-shade/video_simulator/master/camera_simulator/camera_simulator.py --output ./camera_simulator.py
-
-# curl https://raw.githubusercontent.com/open-shade/algos/main/tests/ros_tests.py --output ./ros_tests.py
 
 python3 -m pip install requests
 
@@ -23,7 +21,8 @@ source /opt/ros/"${ROS_DISTRO}"/setup.sh
 source ./install/setup.sh
 
 echo "Starting testing suite"
-result=$(sudo python3 ./ros_tests.py)
+python3 ./ros_tests.py
+result=$?
 # sudo python3 ./ros_tests.py
 
 echo "Killing the ROS algo"

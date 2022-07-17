@@ -5,7 +5,8 @@ import os
 import requests
 from rclpy.node import Node
 import subprocess
-import sys
+
+from posix import _exit
 
 from std_msgs.msg import String
 
@@ -18,14 +19,12 @@ ALGO_NICKNAME = os.getenv('ALGO').split('/')[1]
 ALGO_DETAILS = requests.get('https://provisioning.shaderobotics.com/v1/algo', params={'algo': os.getenv('ALGO')}).json()
 
 
-def eprint(msg: str):
-    print(msg, file=sys.stderr)
-
-
 class MinimalSubscriber(Node):
 
     def __init__(self):
         super().__init__('testing_node')
+        # Thread kill flags
+        self.subprocess = None
 
         # Wait 10 seconds for the algorithm to initialize
         attempts = 0
@@ -67,34 +66,40 @@ class MinimalSubscriber(Node):
 
             if len(publisher_list) > 0:
                 return publisher_list[0]
+
             raise LookupError("Could not determine algorithm output topic")
 
         algorithm_input_topic = determine_input_topic()
         algorithm_output_topic = determine_output_topic()
 
-        eprint(f"Algorithm input topic: {algorithm_input_topic} - algorithm output topic {algorithm_output_topic}")
+        print(f"Algorithm input topic: {algorithm_input_topic} - algorithm output topic {algorithm_output_topic}")
 
-        threading.Thread(target=self.start_publisher, args=(algorithm_input_topic, )).start()
-
-        self.verification_subscription = self.create_subscription(
+        self.subscription = self.create_subscription(
             String,
             algorithm_output_topic,
             self.listener_callback,
             2
         )
 
+        print(f"Subscribed to {algorithm_output_topic}")
+
+        threading.Thread(target=self.start_publisher, args=(algorithm_input_topic, )).start()
+
         threading.Thread(target=self.kill_in_time, args=(MAX_INIT_ATTEMPTS, )).start()
 
-    @staticmethod
-    def start_publisher(input_topic):
-        subprocess.Popen(['python3', os.getcwd() + '/camera_simulator.py'],
-                         env=dict(os.environ).update({"OUTPUT_TOPIC": input_topic}))
+    def kill_proc(self, exit_code: int):
+        if self.subprocess is not None:
+            self.subprocess.kill()
+        _exit(exit_code)
 
-    @staticmethod
-    def kill_in_time(seconds_to_live: int):
+    def start_publisher(self, input_topic):
+        self.subprocess = subprocess.Popen(['python3', os.getcwd() + '/camera_simulator.py'],
+                                           env={**dict(os.environ), **{"OUTPUT_TOPIC": input_topic}})
+
+    def kill_in_time(self, seconds_to_live: int):
         time.sleep(seconds_to_live)
-        eprint(f"Did not hear response in {seconds_to_live}")
-        sys.exit(1)
+        print(f"Did not hear response in {seconds_to_live}")
+        self.kill_proc(1)
 
     def listener_callback(self, msg):
         def check_all_topic_types():
@@ -104,21 +109,25 @@ class MinimalSubscriber(Node):
                 correct = False
                 for active_topic in active_topics:
                     # When one of the active topics match a required topic
-                    if topic == active_topic:
-                        # In this instance
+                    if topic == active_topic[0]:
+                        # Now also check type
                         if active_topic[1][0] in required_topics[topic]['type']:
+                            print(f'✅ {active_topic[0]} found and has correct type '
+                                  f'{required_topics[active_topic[0]]["type"]}')
                             correct = True
                             break
 
                 if not correct:
-                    raise LookupError(f"Could not find {topic} of the correct name and type in {active_topics}")
+                    print(f"❌ Could not find {topic} of the correct name and type in {active_topics}")
+                    self.kill_proc(1)
 
             return True
 
         check_all_topic_types()
 
-        eprint("Validated output topic - exiting...")
-        sys.exit(0)
+        print("✅ Validated algorithm - exiting...")
+
+        self.kill_proc(0)
 
 
 def main(args=None):
