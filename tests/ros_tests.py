@@ -49,7 +49,10 @@ class MinimalSubscriber(Node):
 
         def determine_input_topic():
             # Determine the algorithm's input topic
-            topics: dict = ALGO_DETAILS['topics']
+            try:
+                topics: dict = ALGO_DETAILS['topics']
+            except KeyError:
+                raise KeyError(f"Could not find 'topics' - found '{ALGO_DETAILS}'")
             for topic, value in topics.items():
                 if value['side'] == 'subscriber':
                     return topic
