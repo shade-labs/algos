@@ -9,7 +9,7 @@ apt update && \
     python3-natsort \
     curl \
     python3-pip ffmpeg libsm6 libxext6 ros-"${ROS_DISTRO}"-cv-bridge ros-"${ROS_DISTRO}"-vision-opencv ros-"${ROS_DISTRO}"-rclpy && \
-    python3 -m pip install opencv-python && \
+    python3 -m pip install --upgrade pip && python3 -m pip install opencv-python && \
     curl https://sample-videos.com/video123/mp4/480/big_buck_bunny_480p_10mb.mp4 --output /root/video.mp4
 
 curl https://raw.githubusercontent.com/open-shade/algos/main/tests/ros_tests.py --output ./ros_tests.py
