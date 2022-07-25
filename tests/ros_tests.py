@@ -1,3 +1,4 @@
+import sys
 import threading
 import rclpy
 import time
@@ -19,8 +20,11 @@ ALGO_NICKNAME = os.getenv('ALGO').split('/')[1]
 ALGO_DETAILS = requests.get('https://provisioning.shaderobotics.com/v1/algo', params={'algo': os.getenv('ALGO')}).json()
 
 
-class MinimalSubscriber(Node):
+def eprint(msg):
+    print(msg, file=sys.stderr)
 
+
+class MinimalSubscriber(Node):
     def __init__(self):
         super().__init__('testing_node')
         # Thread kill flags
@@ -55,7 +59,10 @@ class MinimalSubscriber(Node):
         def determine_output_topic():
             # Determine the algorithm's output topic
             publisher_list = []
-            topics: dict = ALGO_DETAILS['topics']
+            try:
+                topics: dict = ALGO_DETAILS['topics']
+            except KeyError:
+                raise KeyError(f"Could not find 'topics' - found '{ALGO_DETAILS}'")
             for topic, value in topics.items():
                 if value['side'] == 'publisher':
                     publisher_list.append(topic)
@@ -72,7 +79,7 @@ class MinimalSubscriber(Node):
         algorithm_input_topic = determine_input_topic()
         algorithm_output_topic = determine_output_topic()
 
-        print(f"Algorithm input topic: {algorithm_input_topic} - algorithm output topic {algorithm_output_topic}")
+        eprint(f"Algorithm input topic: {algorithm_input_topic} - algorithm output topic {algorithm_output_topic}")
 
         self.subscription = self.create_subscription(
             String,
@@ -81,7 +88,7 @@ class MinimalSubscriber(Node):
             2
         )
 
-        print(f"Subscribed to {algorithm_output_topic}")
+        eprint(f"Subscribed to {algorithm_output_topic}")
 
         threading.Thread(target=self.start_publisher, args=(algorithm_input_topic, )).start()
 
@@ -98,7 +105,7 @@ class MinimalSubscriber(Node):
 
     def kill_in_time(self, seconds_to_live: int):
         time.sleep(seconds_to_live)
-        print(f"Did not hear response in {seconds_to_live}")
+        eprint(f"Did not hear response in {seconds_to_live}")
         self.kill_proc(1)
 
     def listener_callback(self, msg):
@@ -112,20 +119,20 @@ class MinimalSubscriber(Node):
                     if topic == active_topic[0]:
                         # Now also check type
                         if active_topic[1][0] in required_topics[topic]['type']:
-                            print(f'✅ {active_topic[0]} found and has correct type '
-                                  f'{required_topics[active_topic[0]]["type"]}')
+                            eprint(f'✅ {active_topic[0]} found and has correct type '
+                                   f'{required_topics[active_topic[0]]["type"]}')
                             correct = True
                             break
 
                 if not correct:
-                    print(f"❌ Could not find {topic} of the correct name and type in {active_topics}")
+                    eprint(f"❌ Could not find {topic} of the correct name and type in {active_topics}")
                     self.kill_proc(1)
 
             return True
 
         check_all_topic_types()
 
-        print("✅ Validated algorithm - exiting...")
+        eprint("✅ Validated algorithm - exiting...")
 
         self.kill_proc(0)
 
