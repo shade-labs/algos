@@ -2,7 +2,7 @@ ARG BASE_IMAGE=ubuntu:16.04
 #################################
 #   Librealsense Builder Stage  #
 #################################
-FROM $BASE_IMAGE as librealsense-builder
+FROM $BASE_IMAGE
 
 ARG LIBRS_VERSION=2.50.0
 # Make sure that we have a version number of librealsense as argument
@@ -50,15 +50,9 @@ RUN cd /usr/src/librealsense \
     && make -j$(($(nproc)-1)) all \
     && make install
 
-######################################
-#   librealsense Base Image Stage    #
-######################################
-FROM ${BASE_IMAGE} as librealsense
-
 # Copy binaries from builder stage
-COPY --from=librealsense-builder /opt/librealsense /usr/local/
-COPY --from=librealsense-builder /usr/lib/python3/dist-packages/pyrealsense2 /usr/lib/python3/dist-packages/pyrealsense2
-COPY --from=librealsense-builder /usr/src/librealsense/config/99-realsense-libusb.rules /etc/udev/rules.d/
+RUN cp -r /opt/librealsense/. /usr/local/
+
 ENV PYTHONPATH=$PYTHONPATH:/usr/local/lib
 
 # Install dep packages
@@ -76,11 +70,11 @@ RUN apt-get update \
 CMD [ "rs-enumerate-devices", "--compact" ]
 
 
-#################################
-#   Librealsense ROS builder stage  #
-#################################
+######################################
+#   Librealsense ROS builder stage   #
+######################################
 
-RUN apt update && apt install -y curl dpkg gpg-agent unzip && \
+RUN apt update && apt install -y curl dpkg unzip && \
     sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' && \
     curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add - && \
     apt update && \
